@@ -4,19 +4,24 @@
     <title>Tính mức khoán</title>
     <style>
         body { font-family: Arial; padding: 20px; }
-        input, select { margin: 5px; padding: 5px; }
+        input, select { margin: 5px; padding: 6px; width: 200px; }
         table { border-collapse: collapse; margin-top: 20px; }
-        td, th { border: 1px solid #ccc; padding: 8px; }
+        td, th { border: 1px solid #ccc; padding: 8px; text-align: center; }
     </style>
 </head>
 <body>
 
 <h2>Tính mức khoán công đoạn</h2>
+
+<label>Tên công đoạn:</label><br>
+<input type="text" id="ten"><br>
+
 <label>SAM:</label><br>
-<input type="number" id="sam" step="0.001"><br>
+<input type="number" id="sam" step="0.001" oninput="tinhTuDong()"><br>
 
 <label>Bậc công đoạn:</label><br>
-<select id="bac">
+<select id="bac" onchange="tinhTuDong()">
+    <option value="">--Chọn--</option>
     <option value="A">A</option>
     <option value="B">B</option>
     <option value="C">C</option>
@@ -26,7 +31,11 @@
     <option value="NAA">NAA</option>
 </select><br>
 
-<button onclick="tinh()">Tính</button>
+<label>% Mức khoán:</label><br>
+<input type="text" id="phantram" readonly><br>
+
+<label>Khoán 1 giờ:</label><br>
+<input type="text" id="khoan1h" readonly><br>
 
 <h3>Kết quả:</h3>
 
@@ -35,7 +44,7 @@
     <th>Tên</th>
     <th>SAM</th>
     <th>Bậc</th>
-    <th>Mức khoán</th>
+    <th>% Khoán</th>
     <th>Khoán 1h</th>
 </tr>
 <tr id="row"></tr>
@@ -43,32 +52,47 @@
 
 <script>
 
-// bảng giống Excel của bạn
+// bảng mức khoán (đã fix lỗi)
 const mucKhoanTable = {
     "A": 0.5,
     "B": 0.6,
     "C": 0.65,
     "D": 0.7,
-    "NB": 0.75
-    "NAA": 0.65
+    "NB": 0.75,
+    "NAA": 0.65,
     "NA": 0.7
 };
 
-function tinh() {
+function tinhTuDong() {
     let ten = document.getElementById("ten").value;
     let sam = parseFloat(document.getElementById("sam").value);
     let bac = document.getElementById("bac").value;
 
-    let mucKhoan = mucKhoanTable[bac];
-    let khoan1h = (60 / sam) * mucKhoan;
+    if (!bac || !mucKhoanTable[bac]) {
+        document.getElementById("phantram").value = "";
+        document.getElementById("khoan1h").value = "";
+        return;
+    }
 
-    document.getElementById("row").innerHTML = `
-        <td>${ten}</td>
-        <td>${sam}</td>
-        <td>${bac}</td>
-        <td>${mucKhoan}</td>
-        <td>${khoan1h.toFixed(2)}</td>
-    `;
+    let mucKhoan = mucKhoanTable[bac];
+
+    // Hiển thị %
+    document.getElementById("phantram").value = (mucKhoan * 100) + " %";
+
+    // Tính khoán 1h
+    if (sam && sam > 0) {
+        let khoan1h = (60 / sam) * mucKhoan;
+        document.getElementById("khoan1h").value = khoan1h.toFixed(2);
+        
+        // Hiển thị bảng
+        document.getElementById("row").innerHTML = `
+            <td>${ten}</td>
+            <td>${sam}</td>
+            <td>${bac}</td>
+            <td>${(mucKhoan * 100)}%</td>
+            <td>${khoan1h.toFixed(2)}</td>
+        `;
+    }
 }
 
 </script>
