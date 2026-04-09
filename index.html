@@ -12,6 +12,7 @@
 <body>
 
 <h2>Tính mức khoán công đoạn</h2>
+
 <label>SAM:</label><br>
 <input type="number" id="sam" step="0.001" oninput="tinhTuDong()"><br>
 
@@ -37,7 +38,6 @@
 
 <table>
 <tr>
-    <th>Tên</th>
     <th>SAM</th>
     <th>Bậc</th>
     <th>% Khoán</th>
@@ -48,25 +48,24 @@
 
 <script>
 
-// bảng mức khoán (đã fix lỗi)
 const mucKhoanTable = {
     "A": 0.5,
     "B": 0.6,
     "C": 0.65,
     "D": 0.7,
-    "NA": 0.7,
+    "NB": 0.75,
     "NAA": 0.65,
-    "NB": 0.75
+    "NA": 0.7
 };
 
 function tinhTuDong() {
-    let ten = document.getElementById("ten").value;
     let sam = parseFloat(document.getElementById("sam").value);
     let bac = document.getElementById("bac").value;
 
     if (!bac || !mucKhoanTable[bac]) {
         document.getElementById("phantram").value = "";
         document.getElementById("khoan1h").value = "";
+        document.getElementById("row").innerHTML = "";
         return;
     }
 
@@ -79,10 +78,8 @@ function tinhTuDong() {
     if (sam && sam > 0) {
         let khoan1h = (60 / sam) * mucKhoan;
         document.getElementById("khoan1h").value = khoan1h.toFixed(2);
-        
-        // Hiển thị bảng
+
         document.getElementById("row").innerHTML = `
-            <td>${ten}</td>
             <td>${sam}</td>
             <td>${bac}</td>
             <td>${(mucKhoan * 100)}%</td>
